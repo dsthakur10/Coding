@@ -192,3 +192,58 @@ ListNode* reverseKGroup(ListNode *head, int k)
 
     return head;
 }
+
+
+
+// Recursive solution
+
+ListNode* reverseKGroup(ListNode* head, int k) {
+
+    ListNode *temp = head, *first, *last;
+    int counter;
+
+    last = NULL;
+    first = temp;
+    counter = 0;
+
+    while(temp && counter < k)
+    {
+        last = temp;
+        temp = temp->next;
+        counter++;
+    }
+
+    if(counter == k)
+    {
+        last->next = NULL;
+        last = first;
+        first = reverse(first);
+        last->next = reverseKGroup(temp, k);
+    }
+
+    return first;
+
+}
+
+
+ListNode* reverse(ListNode* head)
+{
+    if(!head || !head->next)
+        return head;
+
+    ListNode *temp, *cur = NULL, *prev = NULL;
+    temp = head;
+
+    while(temp)
+    {
+        cur = temp;
+        temp = temp->next;
+
+        cur->next = prev;
+        prev = cur;
+    }
+
+    head = cur;
+    return head;
+}
+

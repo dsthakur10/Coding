@@ -112,3 +112,27 @@ ListNode* deleteDuplicates(ListNode* head)
 
     return head;
 }
+
+
+
+
+ListNode* deleteDuplicates(ListNode* head) {
+
+    if(!head || !head->next)
+        return head;
+
+    ListNode *temp = head, *cur = head, *last;
+
+
+    while(temp)
+    {
+        while(temp && temp->next && temp->val == temp->next->val)
+            temp = temp->next;
+
+        cur->next = temp->next;
+        temp = cur->next;
+        cur = temp;
+    }
+
+    return head;
+}
