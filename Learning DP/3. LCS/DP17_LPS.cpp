@@ -7,11 +7,15 @@
 #include<algorithm>
 
 
+// Method-1 --> using LCS
 int LCS(std::string X, std::string Y, int n, int m);
+int LPS(std::string X, int n);
 
+// Method-2 --> Directly
 int LPS(std::string X, std::string Y, int n, int m);        // top-down memoization
 int LPS2(std::string X, std::string Y, int n, int m);       // bottom-up
-int LPS3(std::string X, int n);
+
+// Method-3 --> Directly (TLE in TOP-DOWN)
 
 static int dp[100][100];
 
@@ -37,69 +41,7 @@ int main()
 
 
 
-int LPS(std::string X, std::string Y, int n, int m)
-{
-    if(n == 0)
-        return 0;
-
-    if(m == Y.size())
-        return 0;
-
-    if(m > n)
-        return 0;
-
-    if(dp[n][m] != -1)
-        return dp[n][m];
-
-    else if(n == m)
-        dp[n][m] = 1;
-
-    else if(X[n] == Y[m])
-        dp[n][m] = 2 + LPS(X, Y, n-1, m+1);
-
-    else
-        dp[n][m] = std::max ( LPS(X, Y, n-1, m) , LPS(X, Y, n, m+1) );
-
-    return dp[n][m];
-
-}
-
-
-
-int LPS2(std::string X, std::string Y, int n, int m)
-{
-    int dp[n+1][m+1];
-
-    for(int i=0; i<n+1; i++)
-        dp[i][0] = 0;
-
-    for(int j=0; j<n+1; j++)
-        dp[0][j] = 0;
-
-    for(int k=1; k<=n; k++)
-    {
-        for(int i=1; i<=n+1-k ; i++)
-        {
-            int j = i+k-1;
-
-            if(i==j)
-                dp[i][j] = 1;
-
-            else if(X[i] == Y[j])
-                dp[i][j] = 2 + dp[i+1][j-1];
-
-            else
-                dp[i][j] = std::max ( dp[i+1][j] , dp[i][j-1] );
-        }
-    }
-
-    return dp[1][n];
-}
-
-
-
-
-int LPS3(std::string X, int n)
+int LPS(std::string X, int n)
 {
 
     std::string Y = X;
@@ -110,7 +52,6 @@ int LPS3(std::string X, int n)
     return result;
 
 }
-
 
 
 int LCS(std::string X, std::string Y, int n, int m)
@@ -134,3 +75,65 @@ int LCS(std::string X, std::string Y, int n, int m)
 
     return dp[n][m];
 }
+
+
+// Method-2 --> TLE in TOP-DOWN
+
+vector<vector<int>> dp;
+int longestPalindromeSubseq(string s) {
+
+    int n = s.size();
+    dp = vector<vector<int>>(n+1, vector<int>(n+1, -1));
+
+    return lps(s, 0, n);
+}
+
+int lps(string X, int m, int n)
+{
+    if(m == X.size())
+        return 0;
+
+    if(n == 0)
+        return 0;
+
+    if(dp[m][n] != -1)
+        return dp[m][n];
+
+    if(X[m] == X[n-1])
+        dp[m][n] = 1 + lps(X, m+1, n-1);
+
+    else
+        dp[m][n] = max(lps(X, m+1, n), lps(X, m, n-1));
+
+    return dp[m][n];
+}
+
+
+
+// BOTTOM-UP working fine
+
+vector<vector<int>> dp;
+int longestPalindromeSubseq(string s) {
+
+    int n = s.size();
+    int dp[n+1][n+1];
+
+    for(int i=n; i>=0; i--)             // X
+    {
+        for(int j=0; j<n+1; j++)        // Y
+        {
+            if(i == n || j == 0)
+                dp[i][j] = 0;
+
+            else if(s[i] == s[j-1])
+                dp[i][j] = 1 + dp[i+1][j-1];
+
+            else
+                dp[i][j] = max(dp[i+1][j], dp[i][j-1]);
+        }
+    }
+
+    return dp[0][n];
+}
+
+

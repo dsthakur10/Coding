@@ -128,3 +128,127 @@ int coinChangeCoins2( std::vector<int> denomination, int S, int N)
     return dp[S][N];
 
 }
+
+
+
+// Method-2 -->
+
+// TOP-DOWN
+
+vector<vector<int>> dp;
+
+int coinChange(vector<int>& coins, int amount) {
+
+    int n = coins.size();
+    dp = vector<vector<int>> (n+1, vector<int>(amount+1, -2));
+
+    return minCoins(coins, n, amount);
+}
+
+int minCoins(vector<int>& coins, int n, int amount)
+{
+    if(amount == 0)     // amount used up but coins remaining
+        return dp[n][amount] = 0;
+
+    if(n == 0 && amount != 0)          // no coins left but amount remaining
+        return dp[n][amount] = -1;
+
+    if(dp[n][amount] != -2)
+        return dp[n][amount];
+
+    if(coins[n-1] <= amount)
+    {
+        int x = minCoins(coins, n-1, amount);   // DO NOT select
+        int y = minCoins(coins, n, amount - coins[n-1]);    // select nth coin
+
+        if(x == -1 && y == -1)
+            dp[n][amount] = -1;
+
+        else if(x == -1)
+            dp[n][amount] = 1 + y;
+
+        else if(y == -1)
+            dp[n][amount] = x;
+
+        else
+            dp[n][amount] = min(x, 1 + y);
+
+    }
+
+    else
+        dp[n][amount] = minCoins(coins, n-1, amount);
+
+    return dp[n][amount];
+}
+
+
+
+// Method-3 --> Correct way of Aditya Verma's method (Method-1)
+
+// TOP-DOWN
+
+vector<vector<int>> dp;
+
+int coinChange(vector<int>& coins, int amount) {
+
+    int n = coins.size();
+    dp = vector<vector<int>> (n+1, vector<int>(amount+1, -1));
+
+    int x = minCoins(coins, n, amount);
+
+    return (x == INT_MAX-1) ? -1 : x;
+
+}
+
+int minCoins(vector<int>& coins, int n, int amount)
+{
+    if(amount == 0)
+        return 0;
+
+    if(n == 0)
+        return INT_MAX-1;
+
+    if(dp[n][amount] != -1)
+        return dp[n][amount];
+
+    if(coins[n-1] <= amount)
+        dp[n][amount] = min(1 + minCoins(coins, n, amount - coins[n-1]), minCoins(coins, n-1, amount));
+
+    else
+        dp[n][amount] = minCoins(coins, n-1, amount);
+
+    return dp[n][amount];
+}
+
+
+
+// BOTTOM-UP
+
+int coinChange(vector<int>& coins, int amount) {
+
+    int n = coins.size();
+    vector<vector<int>> dp (n+1, vector<int>(amount+1));
+
+    for(int j = 0; j<amount+1; j++)
+        dp[0][j] = INT_MAX-1;
+
+    for(int i = 0; i<n+1; i++)
+        dp[i][0] = 0;
+
+    for(int i=1; i<n+1; i++)
+    {
+        for(int j=1; j<amount+1; j++)
+        {
+            if(coins[i-1] <= j)
+                dp[i][j] = min (dp[i-1][j], 1 + dp[i][j-coins[i-1]]);
+
+            else
+                dp[i][j] = dp[i-1][j];
+        }
+    }
+
+    if(dp[n][amount] == INT_MAX-1)
+        return -1;
+
+    return dp[n][amount];
+}

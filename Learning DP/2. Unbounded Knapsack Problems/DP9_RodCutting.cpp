@@ -130,3 +130,68 @@ int rodCutting2( std::vector<int> len, std::vector<int> val, int L, int n)
 
     return dp[n+1][L+1];
 }
+
+
+
+// Case when every piece is allowed to use from 1 -> Length
+// Here, there will be no need to store length[] array as every piece is allowed
+
+// len[n-1] is nothing but length "n". So instead of using "len - length[n-1]", we can use "len - n" directly
+
+    // function call --> maxPrice(price, n, n);
+
+
+// TOP-DOWN
+
+int maxPrice(int price[], int n, int len)
+{
+    if(n == 0)
+        return 0;
+
+    if(len == 0)
+        return 0;
+
+    if(dp[n][len] != -1)
+        return dp[n][len];
+
+    if(n <= len)
+        dp[n][len] = max(maxPrice(price, n-1, len),
+                    price[n-1] + maxPrice(price, n, len - n));
+    else
+        dp[n][len] = maxPrice(price, n-1, len);
+
+    return dp[n][len];
+}
+
+
+
+// BOTTOM-UP
+int cutRod(int price[], int n) {
+
+    int dp[n+1][n+1];
+
+    // i --> #pieces
+    // j --> length of rod to be sold
+
+    for(int i=0; i<n+1; i++)
+    {
+        for(int j=0; j<n+1; j++)
+        {
+            if(i==0 || j==0)
+                dp[i][j] = 0;
+
+            else
+            {
+                if(i <= j)
+                {
+                    dp[i][j] = max(price[i-1] + dp[i][j-i], dp[i-1][j]);
+                }
+
+                else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+    }
+
+    return dp[n][n];
+}

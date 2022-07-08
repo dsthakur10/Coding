@@ -51,6 +51,11 @@ int main()
 
 
 
+// Given count subsetSum does NOT work when input array contains "0" elements.
+// eg. --> nums[] = {0,0,0,0,0,0,0,0,1} --> answer = 256 but function returns 1.
+
+// Reason --> adding/subtracting 0's does NOT have any effect --> Solution doesn't consider presence of 0's in array
+// Because, if we have "0", then, it can have +0 and -0 and still will not affect the sum.
 
 int countSubsetSum2(std::vector<int> set, int n, int sum)
 {
@@ -84,8 +89,6 @@ int countSubsetSum2(std::vector<int> set, int n, int sum)
         Expression is nothing but adding all the positive & negative sign numbers --> Add(all + sign numbers)  -  Add(all - sign numbers)
         --> This is nothing but Count #Subset partitions with given difference (here difference = target)
 
-
-
 */
 
 int targetSum(std::vector<int> set, int n, int target)
@@ -94,6 +97,10 @@ int targetSum(std::vector<int> set, int n, int target)
 
     for(int i=0; i<n; i++)
         sum += set[i];
+
+    // Subset sum must be whole number
+    if(target > sum || (sum + target) % 2 == 1)
+        return 0;
 
     int counter = countSubsetSum2(set,n,(sum+target)/2);
 

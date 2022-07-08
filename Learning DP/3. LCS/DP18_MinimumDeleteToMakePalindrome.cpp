@@ -22,12 +22,13 @@ Output : 8
 #include<algorithm>
 
 
-
+// Method-1 --> Using LCS
 int LCS(std::string X, std::string Y, int n, int m);
+int minDeletePalindrome3(std::string X, int n);
+
 
 int minDeletePalindrome(std::string X, std::string Y, int n, int m);        // top-down memoization
 int minDeletePalindrome2(std::string X, std::string Y, int n, int m);       // bottom-up
-int minDeletePalindrome3(std::string X, int n);
 
 static int dp[100][100];
 
@@ -56,41 +57,7 @@ int main()
 }
 
 
-
-int minDeletePalindrome(std::string X, std::string Y, int n, int m)
-{
-    if(n == 0)
-        return 0;
-
-    if(m == Y.size())
-        return 0;
-
-    if(m > n)
-        return 0;
-
-    if(dp[n][m] != -1)
-        return dp[n][m];
-
-    else if(n == m)
-        dp[n][m] = 0;
-
-    else if(X[n] == Y[m])
-        dp[n][m] = minDeletePalindrome(X, Y, n-1, m+1);
-
-    else
-        dp[n][m] = 1 + std::min ( minDeletePalindrome(X, Y, n-1, m) , minDeletePalindrome(X, Y, n, m+1) );
-
-    return dp[n][m];
-
-}
-
-
-
-
-
-
-
-
+// Method-1 --> Using LCS
 
 int minDeletePalindrome3(std::string X, int n)
 {
@@ -103,8 +70,6 @@ int minDeletePalindrome3(std::string X, int n)
     return n - result;
 
 }
-
-
 
 int LCS(std::string X, std::string Y, int n, int m)
 {
@@ -126,4 +91,35 @@ int LCS(std::string X, std::string Y, int n, int m)
     }
 
     return dp[n][m];
+}
+
+
+// Method-2 --> TLE
+
+int minDeletePalindrome(std::string X, int m, int n)
+{
+    if(m == X.size())
+        return 0;
+
+    if(n == 0)
+        return 0;
+
+    if(m > n)
+        return 0;
+
+    if(dp[m][n] != -1)
+        return dp[m][n];
+
+    if(m+1 == n)
+        dp[m][n] = 0;
+
+    else if(X[m] == X[n-1])
+        dp[m][n] = minDeletePalindrome(X, m+1, n-1);
+
+    else
+        dp[m][n] = 1 + min( minDeletePalindrome(X, m+1, n) ,
+                            minDeletePalindrome(X, m, n-1) );
+
+    return dp[m][n];
+
 }

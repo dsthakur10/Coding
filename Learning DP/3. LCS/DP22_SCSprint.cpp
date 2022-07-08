@@ -22,10 +22,16 @@ String "AGXGTXAYB" has both string "AGGTAB" and "GXTXAYB" as subsequences.
 #include<vector>
 #include<algorithm>
 
-int LCS(std::string X, std::string Y, int n, int m);
+
+// Method-1 --> 2 tables are used --> dp[][] to store length & str[][] to store strings --> TLE
 
 int SCS(std::string X, std::string Y, int n, int m);        // top-down memoization
-std::string SCS2(std::string X, std::string Y, int n, int m);       // bottom-up
+std::string SCS(std::string X, std::string Y, int n, int m);       // bottom-up
+
+// Method-2 --> 1 table --> Calculate SCS & then backtrack from dp[m][n] to get the string printed
+string SCS2(string X, string Y, int n, int m);
+
+// Method-3 --> 1 table --> Calculate LCS & then backtrack...
 std::string SCS3(std::string X, std::string Y, int n, int m);
 
 
@@ -108,7 +114,7 @@ int SCS(std::string X, std::string Y, int n, int m)
 
 
 
-std::string SCS2(std::string X, std::string Y, int n, int m)
+std::string SCS(std::string X, std::string Y, int n, int m)
 {
     int dp[n+1][m+1];
     std::string scs[n+1][m+1];
@@ -158,67 +164,135 @@ std::string SCS2(std::string X, std::string Y, int n, int m)
 
 
 
+// Method-2 --> Find SCS --> Backtracks from dp[m][n] all the way back & then reverse the string
 
-std::string SCS3(std::string X, std::string Y, int n, int m)
+string scs2(string X, string Y, int m, int n)
 {
-    std::string scs;
-    int dp[n+1][m+1];
+    int dp[m+1][n+1];
 
-    for(int i=0; i<n+1; i++)
+    for(int i=0; i<m+1; i++)
     {
-        for(int j=0; j<m+1; j++)
+        for(int j=0; j<n+1; j++)
         {
-            if(i==0)
+            if(i == 0)
+                dp[i][j] = j;
+
+            else if(j == 0)
+                dp[i][j] = i;
+
+            else if(X[i-1] == Y[j-1])
+                dp[i][j] = 1 + dp[i-1][j-1];
+
+            else
+                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+
+    string str;
+    int i = m, j = n;
+
+    while(i > 0 && j > 0)
+    {
+        if(X[i-1] == Y[j-1])
+        {
+            str += X[i-1];
+            i--;
+            j--;
+        }
+
+        else if(dp[i-1][j] < dp[i][j-1])
+        {
+            str += X[i-1];
+            i--;
+        }
+
+        else
+        {
+            str += Y[j-1];
+            j--;
+        }
+    }
+
+    while(i > 0)
+    {
+        str += X[i-1];
+        i--;
+    }
+
+    while(j > 0)
+    {
+        str += Y[j-1];
+        j--;
+    }
+
+    reverse(str.begin(), str.end());
+    return str;
+}
+
+
+// Method-3 --> Find LCS --> Backtrack from dp[n][m] all the way till n = 0 || m = 0 & reverse the string
+
+string scs2(string X, string Y, int m, int n)
+{
+    int dp[m+1][n+1];
+
+    // LCS
+    for(int i=0; i<m+1; i++)
+    {
+        for(int j=0; j<n+1; j++)
+        {
+            if(i == 0)
                 dp[i][j] = 0;
 
-            else if(j==0)
+            else if(j == 0)
                 dp[i][j] = 0;
 
             else if(X[i-1] == Y[j-1])
                 dp[i][j] = 1 + dp[i-1][j-1];
 
             else
-                dp[i][j] = std::max ( dp[i-1][j], dp[i][j-1] );
-
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
         }
     }
 
+    //cout << "lcs = " << dp[m][n];
+    string str;
 
-    int i = n, j = m;
-
+    int i = m, j = n;
     while(i > 0 && j > 0)
     {
         if(X[i-1] == Y[j-1])
         {
-            scs += X[i-1];
+            str += X[i-1];
             i--;
             j--;
         }
 
+        else if(dp[i-1][j] > dp[i][j-1])
+        {
+            str += X[i-1];
+            i--;
+        }
+
         else
         {
-            if(dp[i-1][j] > dp[i][j-1])
-            {
-                scs += X[i-1];
-                i--;
-            }
-
-            else
-            {
-                scs += Y[j-1];
-                j--;
-            }
+            str += Y[j-1];
+            j--;
         }
     }
 
-    reverse(scs.begin(), scs.end());
+    while(i > 0)
+    {
+        str += X[i-1];
+        i--;
+    }
 
-    if(i > 0)
-        scs.insert(0, X, 0, i);
+    while(j > 0)
+    {
+        str += Y[j-1];
+        j--;
+    }
 
-    if(j > 0)
-        scs.insert(0, Y, 0, j);
-
-    return scs;
-
+    reverse(str.begin(), str.end());
+    return str;
 }
