@@ -281,3 +281,51 @@ int LDS2(std::vector<int> arr)
     return maxx;
 
 }
+
+
+
+
+// LATEST
+
+
+int LongestBitonicSequence(vector<int>nums)
+{
+    int maxLen = 0;
+    int n = nums.size();
+    vector<int> LIS(n), LDS(n);
+
+    longestIncreasingSub(nums, LIS, n);
+    longestDecreasingSub(nums, LDS, n);
+
+    for(int i=0; i<n; i++)
+        maxLen = max(maxLen, LIS[i] + LDS[i] - 1);
+
+    return maxLen;
+}
+
+
+void longestIncreasingSub(vector<int>& nums, vector<int>& LIS, int n)
+{
+    for(int i=0; i<n; i++)
+    {
+        LIS[i] = 1;
+        for(int j=0; j<i; j++)
+        {
+            if(nums[j] < nums[i])
+                LIS[i] = max(LIS[i], 1 + LIS[j]);
+        }
+    }
+}
+
+void longestDecreasingSub(vector<int>& nums, vector<int>& LDS, int n)
+{
+    for(int i=n-1; i>=0; i--)
+    {
+        LDS[i] = 1;
+        for(int j=n-1; j>i; j--)
+        {
+            if(nums[j] < nums[i])
+                LDS[i] = max(LDS[i], 1 + LDS[j]);
+        }
+    }
+}

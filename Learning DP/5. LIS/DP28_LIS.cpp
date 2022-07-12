@@ -40,9 +40,11 @@ Output: Length of LIS = 3
 
 static int dp[101];
 
+// Normal DP --> O(n^2)
 int LIS(std::vector<int> arr, int n, int &maxx);                        // Top-Down memoization
 int LIS2(std::vector<int> arr);                                         // Bottom-Up
 
+// Binary Search + DP --> O(nlogn)
 int LIS3(std::vector<int> arr);
 
 int main()
@@ -77,37 +79,6 @@ int main()
 }
 
 
-/*
-
-int LIS3(std::vector<int> arr)
-{
-    int maxx, lis=0;
-
-    for(int i=0; i<arr.size(); i++)
-    {
-        int temp = 1;
-        maxx = arr[i];
-
-        for(int j=i+1; j<arr.size(); j++)
-        {
-            if(arr[j] < maxx)
-                maxx = arr[j];
-            else
-            {
-                temp++;
-                maxx = arr[j];
-            }
-        }
-
-        lis = std::max(lis,temp);
-    }
-
-    return lis;
-}
-
-*/
-
-
 
 int LIS(std::vector<int> arr, int n, int &maxx)
 {
@@ -120,60 +91,56 @@ int LIS(std::vector<int> arr, int n, int &maxx)
         return dp[n];
     }
 
-    int temp = 0;
+    int dp[n] = 1;
 
     for(int k=n-1; k>=0; k--)
     {
 
     /*
-        Time limit exceeded
+    // WRONG ANSWER
+
         if(arr[k] < arr[n])
-            temp = std::max (temp, 1 + LIS(arr, k, maxx));
-
-        else
-            LIS(arr, k, maxx);
-
+            dp[n] = max(dp[n], 1 + LIS(arr, k, maxx));
     */
 
-        int temp2 = (dp[k] != -1) ? dp[k] : LIS(arr , k, maxx);
+        int temp = (dp[k] != -1) ? dp[k] : LIS(arr , k, maxx);
 
         if(arr[k] < arr[n])
-            temp = std::max (temp, temp2);
+            dp[n] = max(dp[n], 1 + temp);
 
     }
 
-    dp[n] = 1 + temp;
-
-    maxx = std::max(maxx, dp[n]);
+    maxx = max(maxx, dp[n]);
 
     return dp[n];
 }
 
 
 
-int LIS2(std::vector<int> arr)
-{
-    int maxx=1, n = arr.size();
+// BOTTOM-UP approach
+
+int maxLen = 1;
+int LIS2(vector<int>& nums) {
+
+    int n = nums.size();
     int dp[n];
 
-    dp[0] = 1;
-
-    for(int i=1; i<n; i++)
+    for(int i=0; i<n; i++)
     {
-        int temp = 0;
+        dp[i] = 1;
+
         for(int j=0; j<i; j++)
         {
-            if(arr[j] < arr[i])
-                temp = std::max (temp, dp[j]);
+            if(nums[j] < nums[i])
+                dp[i] = max(dp[i], 1 + dp[j]);
         }
 
-        dp[i] = 1 + temp;
-
-        maxx = std::max( maxx, dp[i] );
+        maxLen = max(maxLen, dp[i]);
     }
 
-    for(int i=0; i<n; i++)
-        std::cout << dp[i] << " ";
-    return maxx;
-
+    return maxLen;
 }
+
+
+
+// Binary Search + DP

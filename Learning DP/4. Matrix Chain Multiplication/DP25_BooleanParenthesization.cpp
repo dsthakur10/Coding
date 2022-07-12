@@ -279,6 +279,14 @@ int booleanParenthesization2(std::string expr, int i, int j, int isTrue)
         else
             rf = booleanParenthesization2(expr, k+1, j, 0);
 
+        // OR
+
+/*
+            int lt = solve(S, i, k-1, 1);
+            int lf = solve(S, i, k-1, 0);
+            int rt = solve(S, k+1, j, 1);
+            int rf = solve(S, k+1, j, 0);
+*/
 
         if(expr[k] == '&')
         {
