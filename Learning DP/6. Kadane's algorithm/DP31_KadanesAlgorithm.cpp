@@ -35,11 +35,11 @@ static int dp[101];
 int kadane(std::vector<int>);               // Without DP
 int kadane2(std::vector<int>);
 
-                                // 1 loop
 
 int kadane3(std::vector<int>, int &start, int &end);               // Without DP
 int kadane4(std::vector<int>, int &start, int &end);
 
+int kadanes(vector<int> nums);
 
 int main()
 {
@@ -208,6 +208,84 @@ int kadane4(std::vector<int> arr, int &start, int &end)
             index = i+1;
         }
 
+    }
+
+    return maxSum;
+}
+
+
+
+// LATEST
+// DP --> dp[i] --> maximum sum of subarray ending at ith index
+int kadanes(vector<int> nums)
+{
+    int n = nums.size();
+    int dp[n];
+    int maxSum = nums[0];
+
+    dp[0] = nums[0] < 0 ? 0 : nums[0];
+
+    for(int i=1; i<n; i++)
+    {
+        dp[i] = dp[i-1] + nums[i];
+        maxSum = max(maxSum, dp[i]);
+
+        if(dp[i] < 0)
+            dp[i] = 0;
+    }
+
+    return maxSum;
+}
+
+
+// Greedy --> O(1) space
+
+int kadanes(vector<int> nums)
+{
+    int n = nums.size();
+    int sum = 0;
+    int maxSum = INT_MIN;
+
+    for(int i=0; i<n; i++)
+    {
+        sum += nums[i];
+        maxSum = max(maxSum, sum);
+
+        if(sum < 0)
+            sum = 0;
+    }
+
+    return maxSum;
+}
+
+
+// PRINT --> max subarray sum
+int kadanes(vector<int> nums)
+{
+    int n = nums.size();
+    int dp[n];
+    int start=0, end=0, temp;
+
+    int maxSum = nums[0];
+    dp[0] = nums[0] < 0 ? 0 : nums[0];
+    temp = nums[0] < 0 ? 1 : 0;
+
+    for(int i=1; i<n; i++)
+    {
+        dp[i] = dp[i-1] + nums[i];
+
+        if(maxSum < dp[i])
+        {
+            maxSum = dp[i];
+            end = i;
+            start = temp;
+        }
+
+        if(dp[i] < 0)
+        {
+            dp[i] = 0;
+            temp = i+1;
+        }
     }
 
     return maxSum;

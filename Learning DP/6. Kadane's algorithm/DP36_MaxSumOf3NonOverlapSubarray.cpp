@@ -231,3 +231,128 @@ vector<int> maxSumThreeNoOverlap(vector<int>& nums, int k)
     return index;
 
 }
+
+
+
+// LATEST
+
+
+vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+
+    int n = nums.size(), maxSum = INT_MIN, firstSum, secondSum, middleSum;
+    vector<int> store(3);
+    vector<int> leftdp = leftSum(nums, k);
+    vector<int> rightdp = rightSum(nums, k);
+    vector<int> prefix = prefixSum(nums);
+
+    for(int i=k; i<=n-2*k; i++)
+    {
+        int middle = prefix[i+k-1] - prefix[i-1];
+        int sum = leftdp[i-1] + middle + rightdp[i+k];
+
+        if(maxSum < sum)
+        {
+            firstSum = leftdp[i-1];
+            store[1] = i;
+            secondSum = rightdp[i+k];
+            maxSum = sum;
+            middleSum = middle;
+        }
+    }
+
+    cout << "first = " << firstSum << " middle = " << middleSum << " second = " << secondSum;
+
+    cout << "\nmaxsum = " << maxSum;
+
+    // Getting the very first index for 1st subarray
+    for(int i=0; i<=store[1]-k; i++)
+    {
+        if((prefix[i+k-1] - ((i-1 < 0) ? 0 : prefix[i-1])) == firstSum)
+        {
+            store[0] = i;
+            break;
+        }
+    }
+
+    for(int i=store[1]+k; i<=n-k; i++)
+    {
+        if(prefix[i+k-1] - prefix[i-1] == secondSum)
+        {
+            store[2] = i;
+            break;
+        }
+    }
+
+    return store;
+}
+
+
+vector<int> leftSum(vector<int>& nums, int len)
+{
+    int n = nums.size();
+    vector<int> dp(n, 0);
+
+    int sum = 0, i=0, j=0;
+    while(j < n)
+    {
+        sum += nums[j];
+
+        if(j-i+1 < len)
+            j++;
+
+        else
+        {
+            if(j == 0)          // takes care of when length = 1
+                dp[j] = sum;
+            else
+                dp[j] = max(dp[j-1], sum);
+
+            sum -= nums[i];
+            i++;
+            j++;
+        }
+    }
+
+    return dp;
+}
+
+vector<int> rightSum(vector<int>& nums, int len)
+{
+    int n = nums.size();
+    vector<int> dp(n, 0);
+
+    int sum = 0, i=n-1, j=n-1;
+    while(j >= 0)
+    {
+        sum += nums[j];
+
+        if(i-j+1 < len)
+            j--;
+
+        else
+        {
+            if(j == n-1)            // takes care of when length = 1
+                dp[j] = sum;
+            else
+                dp[j] = max(sum, dp[j+1]);
+
+            sum -= nums[i];
+            i--;
+            j--;
+        }
+    }
+
+    return dp;
+}
+
+vector<int> prefixSum(vector<int> nums)
+{
+    int n = nums.size();
+    vector<int> prefix(n,0);
+
+    prefix[0] = nums[0];
+    for(int i=1; i<n; i++)
+        prefix[i] = prefix[i-1] + nums[i];
+
+    return prefix;
+}
