@@ -91,7 +91,7 @@ int solve(vector<int> nums, int n)
 
 
 
-// Method-2 --> O(n) time --> BOTTOM-UP
+// Method-2 --> O(n) time | O(n) space --> BOTTOM-UP
 
 int rob(vector<int>& nums) {
 
@@ -108,4 +108,55 @@ int rob(vector<int>& nums) {
     }
 
     return max(dp[n-1][0], dp[n-1][1]);
+}
+
+
+// Method-3 --> O(n) time | O(n) space
+
+int rob(vector<int>& nums)
+{
+    int n = nums.size();
+    int dp[n+1];
+
+    dp[0] = 0;
+    dp[1] = nums[0];        // dp[i] --> state of nums[i-1]
+    int maxSum = dp[1];
+
+    for(int i=2; i<n+1; i++)
+    {
+        dp[i] = max(dp[i-1], dp[i-2] + nums[i-1]);
+        maxSum = max(maxSum, dp[i]);
+    }
+
+    return maxSum;
+}
+
+
+
+// Method-4 --> O(n) time | O(1) space
+
+int rob(vector<int>& nums) {
+
+    int maxSum;
+    int n = nums.size(), cur, prev, prev2;
+    int dp[n+1];
+
+    if(n == 1)
+        return nums[0];
+
+    //dp[0] = 0;
+    //dp[1] = nums[0];
+    prev2 = 0;
+    prev = nums[0];
+    maxSum = nums[0];
+    for(int i=2; i<n+1; i++)
+    {
+        //dp[i] = max(dp[i-1], dp[i-2] + nums[i-1]);
+        cur = max(prev, prev2 + nums[i-1]);
+        maxSum = max(maxSum, cur);
+        prev2 = prev;
+        prev = cur;
+    }
+
+    return maxSum;
 }

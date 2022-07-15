@@ -37,7 +37,7 @@ int findMaxSum(int *arr, int n)
 
 
 
-// O(n^2) --> TOP-DOWN --> TLE
+// TOP-DOWN --> TLE
 
 int dp[1000000];
 int maxSum;
@@ -86,7 +86,7 @@ int solve(vector<int> nums, int n)
 
 
 
-// Method-2 --> O(n) time --> TOP-DOWN
+// Method-2 --> O(n) time | O(n) space --> TOP-DOWN
 
 vector<vector<int>> dp;
 int findMaxSum(int *arr, int n) {
@@ -123,7 +123,7 @@ int solve(int *arr, int n, int k)
 }
 
 
-// O(n) time --> BOTTOM-UP
+// BOTTOM-UP
 
 int findMaxSum(int *arr, int n) {
 
@@ -140,4 +140,88 @@ int findMaxSum(int *arr, int n) {
     }
 
     return max(dp[n-1][0], dp[n-1][1]);
+}
+
+
+
+// Method-3 --> O(n) time | O(n) space
+
+// BOTTOM-UP
+int findMaxSum(int *nums, int n) {
+
+    int dp[n+1];
+
+    dp[0] = 0;
+    dp[1] = nums[0];        // dp[i] --> state of nums[i-1]
+    int maxSum = dp[1];
+
+    for(int i=2; i<n+1; i++)
+    {
+        dp[i] = max(dp[i-1], dp[i-2] + nums[i-1]);
+        maxSum = max(maxSum, dp[i]);
+    }
+
+    return maxSum;
+}
+
+
+// TOP-DOWN
+
+vector<int> dp;
+int maxSum = 0;
+int findMaxSum(int *nums, int n) {
+
+    dp = vector<int> (n+1, -1);
+
+    solve(nums, n);
+    return maxSum;
+}
+
+int solve(int *nums, int n)
+{
+    if(n == 0)
+        return 0;
+
+    if(n == 1)
+    {
+        maxSum = max(maxSum, nums[n-1]);
+        return dp[n] = nums[n-1];
+    }
+
+    if(dp[n] != -1)
+        return dp[n];
+
+    dp[n] = max(solve(nums, n-1), solve(nums, n-2) + nums[n-1]);
+    maxSum = max(maxSum, dp[n]);
+
+    return dp[n];
+}
+
+
+// Method-4 --> O(n) time | O(n) space
+
+int findMaxSum(vector<int>& nums)
+{
+    int maxSum;
+    int n = nums.size(), cur, prev, prev2;
+    int dp[n+1];
+
+    if(n == 1)
+        return nums[0];
+
+    //dp[0] = 0;
+    //dp[1] = nums[0];
+    prev2 = 0;
+    prev = nums[0];
+    maxSum = nums[0];
+    for(int i=2; i<n+1; i++)
+    {
+        //dp[i] = max(dp[i-1], dp[i-2] + nums[i-1]);
+        cur = max(prev, prev2 + nums[i-1]);
+        maxSum = max(maxSum, cur);
+        prev2 = prev;
+        prev = cur;
+    }
+
+    return maxSum;
 }
