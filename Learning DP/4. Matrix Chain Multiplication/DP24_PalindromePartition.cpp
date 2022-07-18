@@ -379,7 +379,7 @@ int solve(string& s, int index, int n)
         return dp[index] = 0;
 
     int ans = INT_MAX;
-    for(int i=index; i<n-1; i++)        // last cur is made (index...n-2) | (n-1...n-1)
+    for(int i=index; i<n-1; i++)        // last cut is made (index...n-2) | (n-1...n-1)
     {
         if(isPalindrome(s, index, i))               // recurse only if the left half of string is palindrome
         {
