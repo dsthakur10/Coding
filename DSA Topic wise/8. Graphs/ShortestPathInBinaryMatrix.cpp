@@ -90,3 +90,46 @@ int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
 
     return -1;
 }
+
+
+
+// NOT OPTIMIZED
+int DIR[9] = {-1, 0, -1 , 1, 1, 0, 1, -1, -1};
+
+int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+
+    int n = grid.size();
+
+    if(grid[0][0] == 1 || grid[n-1][n-1] == 1)
+        return -1;
+
+    return BFS(grid, 0, 0);
+}
+
+int BFS(vector<vector<int>>& grid, int i, int j)
+{
+    int n = grid.size();
+    queue<vector<int>> q;
+
+    q.push({i, j, 1});
+
+    while(!q.empty())
+    {
+        int row = q.front()[0];
+        int col = q.front()[1];
+        int dist = q.front()[2];
+        q.pop();
+
+        if(row >= n || row < 0 || col >= n || col < 0 || grid[row][col] == 1)
+            continue;
+
+        if(row == n-1 && col == n-1)
+            return dist;
+
+        grid[row][col] = 1;
+        for(int k=0; k<8; k++)
+            q.push({row + DIR[k], col + DIR[k+1], dist+1});
+    }
+
+    return -1;
+}

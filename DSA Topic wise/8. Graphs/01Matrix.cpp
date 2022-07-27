@@ -231,7 +231,7 @@ vector<vector<int>> updateMatrix(vector<vector<int>>& mat)
         }
     }
 
-    // mark[r][c]=-1 will work as unvisited nodes.
+    // mat[r][c]=-1 will work as unvisited nodes.
     while (!q.empty())
     {
         int r = q.front().first;

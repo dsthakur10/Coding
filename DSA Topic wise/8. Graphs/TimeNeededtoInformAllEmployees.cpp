@@ -46,7 +46,7 @@ int DFS(vector<int>& manager, vector<int>& informTime, int id)
 
 
 
-// Method-2 --> BOTTOM-UP --> DFS DP on trees
+// Method-2 --> BOTTOM-UP DFS --> DP on trees
 
 // Store the total inform time at every employee node & use it later to avoid traversing the whole path.
 
@@ -136,4 +136,33 @@ int DFS(vector<vector<int>>& graph, vector<int>& informTime, int id)
     }
 
     return informTime[id] + time;
+}
+
+
+// Method-3
+
+int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
+
+    unordered_map<int, vector<int>> mp;
+    for(int i=0; i<n; i++)
+    {
+        mp[manager[i]].push_back(i);
+    }
+
+    return DFS(n, headID, mp, informTime);
+
+}
+
+int DFS(int n, int ID, unordered_map<int, vector<int>>& mp, vector<int>& informTime)
+{
+    int time = 0;
+    vector<int> children = mp[ID];
+
+    for(int x : children)
+    {
+        time = max(time, DFS(n, x, mp, informTime));
+    }
+
+    time += informTime[ID];
+    return time;
 }

@@ -367,3 +367,73 @@ bool DFS(vector<vector<int>>& grid, int i, int j)
 
     return u || d || l || r || boundary;
 }
+
+
+
+// NEW METHOD
+
+// 0's land
+// 1's water
+
+int closed = 0;
+int closedIsland(vector<vector<int>>& board) {
+
+    int m = board.size(), n = board[0].size();
+
+    for(int j=0; j<n; j++)
+    {
+        if(board[0][j] == 0)
+            bfs(board, 0, j);
+
+        if(board[m-1][j] == 0)
+            bfs(board, m-1, j);
+    }
+
+    for(int i=0; i<m; i++)
+    {
+        if(board[i][0] == 0)
+            bfs(board, i, 0);
+
+        if(board[i][n-1] == 0)
+            bfs(board, i, n-1);
+    }
+
+    for(int i=0; i<m; i++)
+    {
+        for(int j=0; j<n; j++)
+        {
+            if(board[i][j] == 0)
+            {
+                bfs(board, i, j);
+                closed++;
+            }
+        }
+    }
+
+    return closed;
+}
+
+void bfs(vector<vector<int>>& board, int i, int j)
+{
+    int m = board.size(), n = board[0].size();
+    queue<pair<int, int>> q;
+
+    q.push({i, j});
+
+    while(!q.empty())
+    {
+        int row = q.front().first;
+        int col = q.front().second;
+        q.pop();
+
+        if(row >= m || row < 0 || col >= n || col < 0 || board[row][col] == 1)
+            continue;
+
+        board[row][col] = 1;
+
+        q.push({row+1, col});
+        q.push({row-1, col});
+        q.push({row, col+1});
+        q.push({row, col-1});
+    }
+}

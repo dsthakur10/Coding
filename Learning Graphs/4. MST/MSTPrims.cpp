@@ -205,20 +205,20 @@ vector<int> prims2(UndirectedGraph graph, int source)
     priority_queue<pli, vector<pli>, greater<pli>> pq;
 
     pq.push({0,source});
-
+    int sum = 0;
     //for(int count=1; count<n; count++)
     while(!pq.empty())
     {
+        int curWeight = pq.top().first;
         int cur = pq.top().second;
         pq.pop();
 
         if(mstSet[cur])                 // avoids solving for unnecessary repeated nodes that are in min-heap
             continue;
 
-
         mstSet[cur] = true;
+        sum += curWeight;
 
-        cout << "\ncur = " << cur << " --> ";
         for(auto it: graph.getAdjacentToNode(cur))
         {
             int x = it.first;
@@ -235,9 +235,8 @@ vector<int> prims2(UndirectedGraph graph, int source)
         }
     }
 
-    int sum = 0;
-    for(int i=1; i<key.size(); i++)
-        sum += key[i];
+    //for(int i=1; i<key.size(); i++)
+        //sum += key[i];
 
     cout << "\n sum of mst = " << sum;
     return parent;
