@@ -173,3 +173,33 @@ void DFS(vector<vector<int>>& adj, vector<int>& visited, int node, int parent)
             DFS(adj, visited, x, node);
     }
 }
+
+
+
+// LATEST
+
+int makeConnected(int n, vector<vector<int>>& connections) {
+
+    int x = connections.size();     // total cables in given graph
+    int k = n;                      // #connected components
+
+    // if #cables given < minimum #cables needed to make a graph connected, return -1
+    if(x < n-1)
+        return -1;
+
+    UnionFind uf(n);
+
+    for(int i=0; i<x; i++)
+    {
+        int u = connections[i][0];
+        int v = connections[i][1];
+
+        if(!uf.connected(u, v))
+        {
+            uf.unionSet(u, v);
+            k--;
+        }
+    }
+
+    return k-1;
+}

@@ -71,6 +71,20 @@ int findCircleNum(vector<vector<int>>& isConnected)
     }
 
     return provinces;
+
+/*
+    unordered_set<int> us;
+    for(int i=0; i<n; i++)
+    {
+        cout << uf.root[i] << " ";
+        us.insert(uf.root[i]);
+    }
+
+    return us.size();
+*/
+    // DONOT DO THIS to find #connected components -->
+    // This is completely wrong --> Since rank of nodes might differ according to different criteria
+
 }
 
 

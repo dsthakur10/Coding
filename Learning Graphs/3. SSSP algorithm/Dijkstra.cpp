@@ -104,53 +104,6 @@ int main()
 */
 
 
-// OPTIMIATION WRONG IN LEETCODE TEST CASES.
-
-vector<long> dijkstra(UndirectedGraph graph, int source)
-{
-    int n = graph.getNumberOfNodes();
-    vector<long> distance(n+1, INT_MAX);
-    distance[source] = 0;
-    priority_queue<pli, vector<pli>, greater<pli>> pq;
-    unordered_set<int> S;
-
-    pq.push({distance[source], source});
-
-    while(!pq.empty())
-    {
-        int cur = pq.top().second;
-        pq.pop();
-        pair<unordered_set<int>::iterator, bool> p = S.insert(cur);
-
-        //if(p.second){
-
-        // This will let us avoid duplicate entries (already visited nodes --> those whose final dist[] are found)
-        // But Is it necessary ? NO --> Since even if we check for repeated nodes, their neighbors ain't getting
-        // any better with high dist[cur] value.
-
-        for(auto it: graph.getAdjacentToNode(cur))
-        {
-            int x = it.first;               // it[0]
-            long weight = it.second;        // it[1]
-
-            // if(S.find(x) == S.end()){
-
-            // This will let us avoid checking for relaxation condition as the neighbor x is already in set S.
-
-            if(distance[cur] + weight < distance[x])
-            {
-                distance[x] = distance[cur] + weight;
-                pq.push({distance[x], x});
-            }
-
-        //}
-        }
-    // }
-    }
-    return distance;
-}
-
-
 // CORRECT WAY --> Optimized
 
 vector<long> dijkstra(UndirectedGraph graph, int source)
@@ -175,7 +128,6 @@ vector<long> dijkstra(UndirectedGraph graph, int source)
         {
             int x = it.first;               // it[0]
             long weight = it.second;        // it[1]
-
 
             if(distance[cur] + weight < distance[x])
             {

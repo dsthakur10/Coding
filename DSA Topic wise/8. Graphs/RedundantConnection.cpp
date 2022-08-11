@@ -50,4 +50,70 @@ vector<int> findRedundantConnection(vector<vector<int>>& edges) {
 // But here lies a problem --> Normal Cycle detection won't give last added edge in cycle. It will give random
 // edge of cycle. To get last added edge, we need to keep track of cycle start node & end of cycle.
 
+int cycleStart = -1;
+unordered_set<int> cycle;
 
+vector<vector<int>> buildGraph(vector<vector<int>>& edges, int n)
+{
+    vector<vector<int>> adj(n+1);
+
+    for(int i=0; i<edges.size(); i++)
+    {
+        int u = edges[i][0];
+        int v = edges[i][1];
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    return adj;
+}
+
+void DFS(vector<vector<int>>& adj, vector<int>& visited, int cur, int parent)
+{
+    // start of cycle
+    if(visited[cur])
+    {
+        cycleStart = cur;
+        return;
+    }
+
+    visited[cur] = 1;
+
+    for(int x : adj[cur])
+    {
+        if(x == parent)         // same node from which current came
+            continue;
+
+        if(cycle.empty())                   // Cycle not yet detected --> Keep traversing
+            DFS(adj, visited, x, cur);
+
+        if(cycleStart != -1)                // cycle detected & hence cycleStart's value is changed --> Insert cur
+            cycle.insert(cur);
+
+        // end of cycle
+        if(cycleStart == cur)               // whole cycle has been traversed starting from cur till cur --> return
+        {
+            cycleStart = -1;
+            return;
+        }
+    }
+}
+
+vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+
+    int n = edges.size();
+    vector<vector<int>> adj = buildGraph(edges, n);
+    vector<int> visited(n+1, 0);
+
+    DFS(adj, visited, 1, -1);
+
+    // start looking for edge from the end
+    for(int i=edges.size()-1; i >=0 ; i--)
+    {
+        if(cycle.find(edges[i][0]) != cycle.end() && cycle.find(edges[i][1]) != cycle.end())
+            return edges[i];
+    }
+
+    return {};
+}

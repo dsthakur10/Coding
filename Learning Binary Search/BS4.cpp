@@ -53,10 +53,10 @@ int findRotations2(vector<int>& nums)
         if(mid != 0 && nums[mid-1] > nums[mid])
             return mid;
 
-        if(mid != n-1 && nums[mid] > nums[mid+1])
+        else if(mid != n-1 && nums[mid] > nums[mid+1])
             return mid+1;
 
-        if(nums[low] < nums[mid])
+        else if(nums[low] < nums[mid])
             low = mid + 1;
 
         else
