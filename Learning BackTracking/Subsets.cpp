@@ -34,17 +34,6 @@ void addSubset(vector<int> input, vector<int> output)
         return;
     }
 
-/*
-    vector<int> op1 = output;
-    vector<int> op2 = output;
-    op2.push_back(input[0]);
-
-    input.erase(input.begin());
-
-    addSubset(input, op1);
-    addSubset(input, op2);
-*/
-
     int x = input[0];
     input.erase(input.begin());
 
@@ -91,3 +80,37 @@ vector<vector<int>> subsets2(vector<int>& nums)
 }
 
 
+
+// Method-3 --> Pass by reference
+
+vector<vector<int>> result;
+
+vector<vector<int>> subsets(vector<int>& nums) {
+
+    vector<int> output;
+    getSubsets(nums, output);
+
+    return result;
+}
+
+void getSubsets(vector<int>& input, vector<int>& output)
+{
+    if(input.empty())
+    {
+        result.push_back(output);
+        return;
+    }
+
+    int x = input[0];
+    input.erase(input.begin());
+
+    getSubsets(input, output);
+
+    output.push_back(x);
+
+    getSubsets(input, output);
+
+    output.pop_back();
+
+    input.insert(input.begin(), x);
+}

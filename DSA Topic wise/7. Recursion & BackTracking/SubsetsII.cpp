@@ -112,8 +112,37 @@ void addSubsets(vector<int>& input, vector<int>& output)
 */
 
 
+vector<vector<int>> result;
 
+vector<vector<int>> subsetsWithDup(vector<int>& nums) {
 
+    vector<int> output;
+    sort(nums.begin(), nums.end());
+    addSubsets(nums, output, 0);
+
+    return result;
+}
+
+void addSubsets(vector<int>& nums, vector<int>& output, int index)
+{
+    result.push_back(output);
+
+    int i = index;
+    int n = nums.size();
+    while(i < n)
+    {
+        if(i != index && i > 0 && nums[i] == nums[i-1])
+        {
+            i++;
+            continue;
+        }
+
+        output.push_back(nums[i]);
+        addSubsets(nums, output, i+1);
+        output.pop_back();
+        i++;
+    }
+}
 
 
 
