@@ -89,7 +89,8 @@ int substringWithAtmostKCharacters(string s, int k)
 /*
     1. Create count[3] vector for keeping track of all the letters --> a,b,c
     2. Keep incrementing window until you find every character count >= 1
-    3. While count >= 1 for all, add (n-1) - j + 1 (All substrings covering mandatory [i,j]+other till end of string)
+    3. While count >= 1 for all, add (n-1) - j + 1
+        (All substrings covering mandatory [i,j]+other till end of string)
     4. Decrement window & undo the work.
 */
 
@@ -117,7 +118,6 @@ int numberOfSubstrings(string s) {
             }
             j++;
         }
-
     }
 
     return number;

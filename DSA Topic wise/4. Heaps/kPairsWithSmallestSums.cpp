@@ -23,9 +23,43 @@ Explanation: All possible pairs are returned from the sequence: [1,3],[2,3]
 
 */
 
+// Method-1 --> TLE
+
+typedef pair<int, pair<int, int>> ppi;
+// <sum, <u, v>>
+
+vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+
+    vector<vector<int>> result;
+    priority_queue<ppi> pq;
+
+    for(int i=0; i<nums1.size(); i++)
+    {
+        for(int j=0; j<nums2.size(); j++)
+        {
+            pq.push({nums1[i] + nums2[j], {nums1[i], nums2[j]}});
+
+            if(pq.size() > k)
+                pq.pop();
+        }
+    }
+
+    while(!pq.empty())
+    {
+        int u = pq.top().second.first;
+        int v = pq.top().second.second;
+        pq.pop();
+
+        result.push_back({u, v});
+    }
+
+    return result;
+}
 
 
-// Method-1 --> O(klogn) time --> In worst case min-heap will contain all 1 element from each row. --> size = n
+
+
+// Method-2 --> O(klogn) time --> In worst case min-heap will contain all 1 element from each row. --> size = n
 
 // <sum, <index1, index2>>
 typedef pair< int, pair<int, int>> ppi;

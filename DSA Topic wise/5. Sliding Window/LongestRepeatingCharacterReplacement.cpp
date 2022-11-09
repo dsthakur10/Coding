@@ -39,15 +39,86 @@ So, let's say there were no constraints like "k".
 */
 
 
+// Naive method
+
+int getHighestFrequency(unordered_map<char, int>& mp)
+{
+    int curHighFreq = 0;
+    for(auto it : mp)
+        curHighFreq = max(curHighFreq, it.second);
+
+    return curHighFreq;
+}
+
+int characterReplacement(string s, int k) {
+
+    unordered_map<char, int> mp;
+    int n = s.size();
+    int i=0, j=0;
+    int maxLen = 0;
+
+    while(j < n)
+    {
+        mp[s[j]]++;
+        int current = getHighestFrequency(mp);
+
+        if((j-i+1 - current) <= k)
+        {
+            maxLen = max(maxLen, j-i+1);
+            j++;
+        }
+
+        else
+        {
+            while((j-i+1 - current) > k)
+            {
+                mp[s[i]]--;
+
+                if(mp[s[i]] == 0)
+                    mp.erase(s[i]);
+
+                if(current == s[i])
+                    current = getHighestFrequency(mp);
+
+                i++;
+            }
+
+            maxLen = max(maxLen, j-i+1);
+            j++;
+        }
+
+    }
+
+    return maxLen;
+}
+
+
+
+// Method - 2
+
 // Maintain "curMax" character which is most frequently occurring character in current window.
 // As & when you slide window, update this curMax
+
+
+char findCurrentMax(unordered_map<char, int>& mp, char ch)
+{
+    char curMax = ch;
+
+    for(auto it = mp.begin(); it != mp.end(); it++)
+    {
+        if(it->second > mp[curMax])
+            curMax = it->first;
+    }
+
+    return curMax;
+}
 
 
 int characterReplacement(string s, int k)
 {
     unordered_map<char, int> mp;
     int maxLen = 0;
-    char curMax = 'A';
+    char curMax;
     int i=0, j=1;
 
     mp[s[0]]++;
@@ -87,23 +158,11 @@ int characterReplacement(string s, int k)
 }
 
 
-char findCurrentMax(unordered_map<char, int>& mp, char ch)
-{
-    char curMax = ch;
 
-    for(auto it = mp.begin(); it != mp.end(); it++)
-    {
-        if(it->second > mp[curMax])
-            curMax = it->first;
-    }
-
-    return curMax;
-}
-
-
+// Method - 3
 
 // Without an extra while loop to find curMax --> no need
-// When the sliding window shrinks, the counts array won't get larger.
+// When the sliding window shrinks, the HashMap won't get larger.
 // So basically curMax never be updated in this loop
 
 int characterReplacement(string s, int k) {
@@ -133,11 +192,6 @@ int characterReplacement(string s, int k) {
             if(j-i+1 - mp[curMax] > k)
             {
                 mp[s[i]]--;
-
-                // if(curMax == s[i])
-                //     curMax = findCurrentMax(mp, s[i]);
-                // // find new curMax
-
                 i++;
             }
 

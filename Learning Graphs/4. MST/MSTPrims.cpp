@@ -190,7 +190,7 @@ vector<int> prims(UndirectedGraph graph, int source)
 // Method-2 --> Min-heap to make searching minimum key value log(V) instead of V --> Time = O(V+E)logV
 
 // Run the loop till all the nodes have been visited
-// because in the brute code we checked for mstSet[node] == false while computing the minimum
+// because in the brute-force code we checked for mstSet[node] == false while computing the minimum
 // but here we simply take the minimal from the priority queue, so a lot of times a node might be taken twice
 // hence its better to keep running till all the nodes have been taken.
 
@@ -205,6 +205,7 @@ vector<int> prims2(UndirectedGraph graph, int source)
     priority_queue<pli, vector<pli>, greater<pli>> pq;
 
     pq.push({0,source});
+
     int sum = 0;
     //for(int count=1; count<n; count++)
     while(!pq.empty())
@@ -213,7 +214,7 @@ vector<int> prims2(UndirectedGraph graph, int source)
         int cur = pq.top().second;
         pq.pop();
 
-        if(mstSet[cur])                 // avoids solving for unnecessary repeated nodes that are in min-heap
+        if(mstSet[cur])              // avoids solving for unnecessary repeated nodes that are in min-heap
             continue;
 
         mstSet[cur] = true;

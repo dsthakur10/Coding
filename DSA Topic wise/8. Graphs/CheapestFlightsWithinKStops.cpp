@@ -38,70 +38,6 @@ The optimal path with no stops from city 0 to 2 is marked in red and has cost 50
 */
 
 
-// Method-1 --> WRONG APPROACH
-
-// Problem of "Single Pair Shortest Path" which is a subset of "Single Source Shortest Path"
-// Extra constraint given in the question : #stops between source & destination <= k
-
-
-typedef pair<int, int> pi;
-
-int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
-
-    vector<int> dist(n, INT_MAX);
-    vector<int> hops(n, INT_MAX);
-    priority_queue< vector<int>, vector<vector<int>>, greater<vector<int>> > pq;
-                                                                        // {distance, vertex, stops}
-    vector<vector<pi>> adj = buildGraph(flights, n);
-
-    dist[src] = 0;
-    pq.push({dist[src], src, -1});
-
-    while(!pq.empty())
-    {
-        int curWeight = pq.top()[0];
-        int cur = pq.top()[1];
-        int stops = pq.top()[2];
-        pq.pop();
-
-        if(curWeight > dist[cur])
-            continue;
-
-        for(auto it : adj[cur])
-        {
-            int v = it.first;
-            int weight = it.second;
-
-            if(dist[cur] + weight < dist[v] && stops < k)
-            {
-                dist[v] = dist[cur] + weight;
-                pq.push({dist[v], v, stops+1});
-            }
-        }
-    }
-
-    return dist[dst] == INT_MAX ? -1 : dist[dst];
-}
-
-
-vector<vector<pi>> buildGraph(vector<vector<int>>& edges, int n)
-{
-    vector<vector<pi>> adj(n, vector<pi>());
-
-    for(int i=0; i<edges.size(); i++)
-    {
-        int u = edges[i][0];
-        int v = edges[i][1];
-        int w = edges[i][2];
-
-        adj[u].push_back({v,w});
-    }
-
-    return adj;
-}
-
-
-
 /*
 The key difference with the classic Dijkstra algo : We don't maintain the global optimal distance to each node,
 i.e. ignore below optimization:
@@ -164,19 +100,58 @@ int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int
 
 // Own Method
 
-/*
-    Constraints for our problem:
-        1. Minimum price of the path
-        2. Atmost K stops between source & destination
-    Because of constraint-2, we cannot use traditional Dijkstra which only checks for 1st constraint.
-    We have to modify our algorithm to incorporate the 2nd constraint as well.
-    Also, in terms of priority
-        2nd constraint > 1st constraint
-    Meaning, you CAN afford "costlier path" but CANNOT afford #stops > k.
-    You CANNOT afford "cheaper path" with #stops > k.
+typedef pair<int, int> pi;
+typedef pair<int, pair <int, int>> ppi;
 
-    Hence, we will keep 2 arrays now --> distance[] | hops[]
+vector<vector<pi>> buildGraph(vector<vector<int>>& flights, int n)
+{
+    vector<vector<pi>> adj(n);
 
+    for(int i=0; i<flights.size(); i++)
+    {
+        adj[flights[i][0]].push_back({flights[i][1], flights[i][2]});
+    }
 
+    return adj;
+}
 
-*/
+int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+
+    vector<vector<pi>> adj = buildGraph(flights, n);
+    queue<ppi> q;
+    vector<int> dist(n, INT_MAX);
+
+    dist[src] = 0;
+    q.push({0, {src, 0}});
+
+    while(!q.empty())
+    {
+        auto cur = q.front();
+        q.pop();
+
+        int curStops = cur.first;
+        int curNode = cur.second.first;
+        int curDist = cur.second.second;
+
+        if(curStops > k)
+            continue;
+
+        for(auto it : adj[curNode])
+        {
+            int x = it.first;
+            int weight = it.second;
+
+            // if(dist[x] > dist[curNode] + weight && curStops <= k)
+            if(dist[x] > curDist + weight && curStops <= k)
+            {
+                dist[x] = curDist + weight;
+                q.push({curStops+1, {x, dist[x]}});
+            }
+        }
+    }
+
+    if(dist[dst] == INT_MAX)
+        return -1;
+
+    return dist[dst];
+}

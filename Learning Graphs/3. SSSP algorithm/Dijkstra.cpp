@@ -98,7 +98,7 @@ int main()
     4. While min-heap IS NOT EMPTY:
         a. Pop the top element.
         b. Perform edge relaxation on neighbour of popped elements. --> Update the distance[neighbor]
-        c. Push neighbors only if distance gets updated.
+        c. Push neighbors only if distance gets updated.    --> VVIMP STEP
     5. Return distance[] array.
 
 */
@@ -133,6 +133,55 @@ vector<long> dijkstra(UndirectedGraph graph, int source)
             {
                 distance[x] = distance[cur] + weight;
                 pq.push({distance[x], x});
+            }
+        }
+    }
+
+    return distance;
+}
+
+
+// Using Set gives better complexity than Priority-Queue ? --> NO
+// set.erase() runs in O(logn) time
+// You have saved unnecessary iterations of PQ but you got stuck here --> set.erase()
+
+// Method-2 --> Using Set
+
+vector<long> dijkstra(UndirectedGraph graph, int source)
+{
+    int n = graph.getNumberOfNodes();
+    set<pair<long, int>> sett;
+    vector<long> distance(n+1, INT_MAX);
+    distance[source] = 0;
+
+    sett.insert({distance[source], source});
+
+    while(!sett.empty())
+    {
+        auto it = *(sett.begin());
+        int cur = it.second;
+        int curWeight = it.first;
+        sett.erase(sett.begin());
+
+/*
+        if(curWeight > distance[cur])
+            continue;
+*/
+        for(auto it: graph.getAdjacentToNode(cur))
+        {
+            int x = it.first;               // it[0]
+            long weight = it.second;        // it[1]
+
+            if(distance[cur] + weight < distance[x])
+            {
+                // delete old entry if it exists
+                sett.erase({distance[x], x});
+
+                // update distance --> relax edge
+                distance[x] = distance[cur] + weight;
+
+                // enter new entry
+                sett.insert({distance[x], x});
             }
         }
     }

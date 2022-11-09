@@ -110,7 +110,6 @@ int main()
 bool BellmanFord(DirectedGraph graph, int source, vector<long>& distance)
 {
     int n = graph.getNumberOfNodes();
-    //vector<int> distance(n+1, INT_MAX);
 
     distance[source] = 0;
 
